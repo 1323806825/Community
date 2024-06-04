@@ -66,7 +66,7 @@ func (m *QuestionApi) GetQuestionList(c *gin.Context) {
 	var iQuestionList dto.QuestionListDTO
 	if err := m.BuildRequest(BuildRequestOption{
 		Ctx:     c,
-		DTO:     iQuestionList,
+		DTO:     &iQuestionList,
 		BindAll: true,
 	}).GetError(); err != nil {
 		return
@@ -368,7 +368,31 @@ func (m *QuestionApi) AddQuestionSubscribe(c *gin.Context) {
 }
 
 func (m *QuestionApi) DeleteQuestionSubscribe(c *gin.Context) {
+	var iDeleteQuestionSubscribe dto.DeleteQuestionSubscribeDTO
+	if err := m.BuildRequest(BuildRequestOption{
+		Ctx:     c,
+		DTO:     &iDeleteQuestionSubscribe,
+		BindAll: true,
+	}).GetError(); err != nil {
+		return
+	}
 
+	var iUserAuth dto.UserAuthDTO
+	iUserAuth.PutAuth(c)
+
+	err := m.Service.DeleteQuestionSubscribe(&iDeleteQuestionSubscribe, &iUserAuth)
+	if err != nil {
+		m.Fail(ResponseJson{
+			Code:    http.StatusBadRequest,
+			Message: err.Error(),
+		})
+		return
+	}
+
+	m.OK(ResponseJson{
+		Code:    0,
+		Message: "delete subscribe success",
+	})
 }
 
 func (m *QuestionApi) GetMyQuestionSubscribe(c *gin.Context) {

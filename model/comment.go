@@ -11,5 +11,5 @@ type Comment struct {
 	QuestionID      uint       `gorm:"not null;comment:所属问题ID"`
 	PictureID       *uint      `gorm:"foreignKey:PictureID;autoForeignKey"`
 	Picture         UploadFile `gorm:"references:ID"`
-	//LikeCount  uint   `gorm:"default:0;comment:点赞量"`
+	LikeCount       int64      `gorm:"default:0;comment:点赞量"`
 }

@@ -19,7 +19,7 @@ func InitCommentRouters() {
 			rgAuthComment.POST("/post/question", commentApi.CommentPostQuestion)
 			rgAuthComment.POST("/post/comment", commentApi.CommentPostComment)
 			rgAuthComment.GET("/my", commentApi.GetMyComment)
-			rgAuthComment.POST("/upload/picture", commentApi.UploadPicture)
+			rgAuthComment.POST("/upload/picture", commentApi.UploadCommentPicture)
 			rgAuthComment.POST("/delete/picture", commentApi.DeleteCommentPicture)
 			rgAuthComment.POST("/delete", commentApi.DeleteComment)
 			rgAuthComment.GET("/like-count", commentApi.GetMyCommentLikeCount)

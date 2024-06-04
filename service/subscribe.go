@@ -30,11 +30,11 @@ func (m *SubscribeService) AddSubscribe(iAddSubscribe *dto.AddSubscribeDTO, iUse
 	if err != nil {
 		return nil
 	}
-	err = m.Dao.AddQuestionSubscribe(iAddSubscribe)
+	err = m.Dao.AddSubscribe(iAddSubscribe, iUserAuthDTO.Uid)
 	if err != nil {
 		return err
 	}
-	return m.Dao.AddSubscribe(iAddSubscribe, iUserAuthDTO.Uid)
+	return m.Dao.AddQuestionSubscribe(iAddSubscribe)
 
 }
 
@@ -42,7 +42,12 @@ func (m *SubscribeService) DeleteSubscribe(iDeleteSubscribe *dto.DeleteSubscribe
 	if err := iDeleteSubscribe.Validate(); err != nil {
 		return utils.ParseValidateError(err)
 	}
+
 	err := m.Dao.DeleteSubscribe(iDeleteSubscribe, iUserAuthDTO.Uid)
+	if err != nil {
+		return err
+	}
+	err = m.Dao.DeleteQuestionSubscribe(iDeleteSubscribe)
 	if err != nil {
 		return err
 	}

@@ -24,22 +24,30 @@ func NewSubscribeDao() *SubscribeDao {
 func (m *SubscribeDao) AddSubscribe(stSubscribe *dto.AddSubscribeDTO, uid uint) error {
 	var iSubscribe model.Subscribe
 	stSubscribe.Convey2Model(&iSubscribe, &uid)
-	err := m.Orm.Create(&iSubscribe).Error
+	var count int64
+	err := m.Orm.Model(&model.Subscribe{}).Where("question_id = ? and member_id = ?", iSubscribe.QuestionID, iSubscribe.MemberID).Count(&count).Error
+	if count > 0 {
+		return errors.New("已订阅该问题")
+	}
+	err = m.Orm.Create(&iSubscribe).Error
 	if err != nil {
 		return err
 	}
-	//m.Orm.Model(&model.Question{}).Update("subscribe_count", )
 	return nil
 }
 
 func (m *SubscribeDao) DeleteSubscribe(stSubscribe *dto.DeleteSubscribeDTO, uid uint) error {
 	var iSubscribe model.Subscribe
 	stSubscribe.Convey2Model(&iSubscribe, &uid)
+	var count int64
+	m.Orm.Model(&model.Subscribe{}).Where("question_id = ? and member_id = ?", iSubscribe.QuestionID, iSubscribe.MemberID).Count(&count)
+	if count < 0 {
+		return errors.New("未找到该表")
+	}
 	err := m.Orm.Model(&model.Subscribe{}).Where("question_id = ?", iSubscribe.QuestionID).Delete(&iSubscribe).Error
 	if err != nil {
 		return err
 	}
-	//m.Orm.Model(&model.Question{}).Update("subscribe_count", )
 	return nil
 }
 
@@ -65,5 +73,16 @@ func (m *SubscribeDao) AddQuestionSubscribe(iAddQuestionSubscribe *dto.AddSubscr
 	iAddQuestionSubscribe.ConveyToModel(&Question, &iAddQuestionSubscribe.QuestionID)
 
 	err := m.Orm.Model(&model.Question{}).Where("id = ?", iAddQuestionSubscribe.QuestionID).Update("subscribe_count", Question.SubscribeCount+1).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *SubscribeDao) DeleteQuestionSubscribe(iDeleteQuestionSubscribe *dto.DeleteSubscribeDTO) error {
+	var Question model.Question
+	iDeleteQuestionSubscribe.ConveyToModel(&Question, &iDeleteQuestionSubscribe.QuestionID)
+
+	err := m.Orm.Model(&model.Question{}).Where("id = ?", iDeleteQuestionSubscribe.QuestionID).Update("subscribe_count", Question.SubscribeCount+1).Error
 	return err
 }

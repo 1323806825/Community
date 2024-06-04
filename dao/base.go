@@ -82,3 +82,12 @@ func (m *BaseDao) GenerateTempId(id int) (string, error) {
 	}
 
 }
+
+func (m *BaseDao) SaveFile(info dto.InnerFileInfo, uid uint) (model.UploadFile, error) {
+	var iFile model.UploadFile
+	info.ConveyFromInnerFile(&iFile, uid)
+	if err := m.Orm.Model(&model.UploadFile{}).Save(&iFile).Error; err != nil {
+		return model.UploadFile{}, err
+	}
+	return iFile, nil
+}

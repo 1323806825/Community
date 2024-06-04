@@ -183,3 +183,16 @@ func (m *QuestionService) GetMySubscribe(iGetMySubscribeDTO *dto.GetMySubscribeD
 	}
 	return total, nil
 }
+
+func (m *QuestionService) DeleteQuestionSubscribe(iDeleteSubscribeDTO *dto.DeleteQuestionSubscribeDTO, iUserAuthDTO *dto.UserAuthDTO) error {
+	if err := iDeleteSubscribeDTO.Validate(); err != nil {
+		return utils.ParseValidateError(err)
+	}
+
+	_, err := m.Dao.GetQuestionDetail(iDeleteSubscribeDTO.QuestionID, iUserAuthDTO.Uid)
+	if err != nil {
+		return err
+	}
+
+	return m.Dao.DeleteQuestionSubscribe(iDeleteSubscribeDTO)
+}

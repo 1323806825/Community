@@ -100,3 +100,17 @@ func (m *GetMySubscribeDTO) Validate() error {
 	validate := validator.New()
 	return validate.Struct(m)
 }
+
+type DeleteQuestionSubscribeDTO struct {
+	QuestionID uint `json:"question_id" form:"question_id" validate:"required,number"`
+}
+
+func (m *DeleteQuestionSubscribeDTO) Validate() error {
+	validate := validator.New()
+	return validate.Struct(m)
+}
+
+func (m *DeleteQuestionSubscribeDTO) ConveyToModel(DeleteQuestionSubscribe *model.Question, uid *uint) {
+	DeleteQuestionSubscribe.OwnerID = uid
+
+}

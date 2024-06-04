@@ -65,3 +65,30 @@ func (m *DeleteCommentDTO) ConveyToModel(iComment *model.Comment, uid *uint) {
 	iComment.QuestionID = m.CommentID
 	iComment.OwnerID = uid
 }
+
+type GetMyCommentLikeCount struct {
+	CommentID uint `json:"comment_id" form:"comment_id" validate:"required,number"`
+}
+
+func (m *GetMyCommentLikeCount) Validate() error {
+	validate := validator.New()
+	return validate.Struct(m)
+}
+
+type UploadCommentPictureDTO struct {
+	CommentID uint `json:"comment_id" form:"comment_id" validate:"required,number"`
+}
+
+func (m *UploadCommentPictureDTO) Validate() error {
+	validate := validator.New()
+	return validate.Struct(m)
+}
+
+type DeleteCommentPictureDTO struct {
+	CommentID uint `json:"comment_id" form:"comment_id" validate:"required,number"`
+}
+
+func (m *DeleteCommentPictureDTO) Validate() error {
+	validate := validator.New()
+	return validate.Struct(m)
+}

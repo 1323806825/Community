@@ -37,3 +37,8 @@ func (m *DeleteSubscribeDTO) Convey2Model(subscribe *model.Subscribe, uid *uint)
 	subscribe.MemberID = uid
 	subscribe.QuestionID = &m.QuestionID
 }
+
+func (m *DeleteSubscribeDTO) ConveyToModel(DeleteQuestionSubscribe *model.Question, uid *uint) {
+	DeleteQuestionSubscribe.OwnerID = uid
+
+}

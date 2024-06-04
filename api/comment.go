@@ -180,13 +180,123 @@ func (m *CommentApi) DeleteComment(c *gin.Context) {
 }
 
 func (m *CommentApi) GetMyCommentLikeCount(c *gin.Context) {
+	var iGetMyCommentLikeCount dto.GetMyCommentLikeCount
+	if err := m.BuildRequest(BuildRequestOption{
+		Ctx:     c,
+		DTO:     &iGetMyCommentLikeCount,
+		BindAll: true,
+	}).GetError(); err != nil {
+		return
+	}
 
+	var iUserAuth dto.UserAuthDTO
+	iUserAuth.PutAuth(c)
+
+	nTotal, err := m.Service.GetMyLikeCount(&iGetMyCommentLikeCount, &iUserAuth)
+	if err != nil {
+		m.SetError(err)
+		m.Fail(ResponseJson{
+			Code:    http.StatusBadRequest,
+			Message: err.Error(),
+		})
+		return
+	}
+
+	m.OK(ResponseJson{
+		Code:    0,
+		Message: "get like count success",
+		Total:   nTotal,
+	})
 }
 
-func (m *CommentApi) UploadPicture(c *gin.Context) {
+func (m *CommentApi) UploadCommentPicture(c *gin.Context) {
+	var iUploadCommentPicture dto.UploadCommentPictureDTO
 
+	if err := m.BuildRequest(BuildRequestOption{
+		Ctx:     c,
+		DTO:     &iUploadCommentPicture,
+		BindAll: true,
+	}).GetError(); err != nil {
+		return
+	}
+
+	var iUserAuth dto.UserAuthDTO
+	iUserAuth.PutAuth(c)
+
+	err := m.Service.UploadCommentPictureFormValidate(&iUploadCommentPicture, &iUserAuth)
+	if err != nil {
+		m.Fail(ResponseJson{
+			Code:    http.StatusBadRequest,
+			Message: err.Error(),
+		})
+		return
+	}
+
+	err = m.Service.CheckCommentPictureExist(&iUploadCommentPicture)
+	if err != nil {
+		m.Fail(ResponseJson{
+			Code:    http.StatusBadRequest,
+			Message: err.Error(),
+		})
+		return
+	}
+
+	uploadPath := "./upload/"
+
+	file, err := m.SaveFile("image", uploadPath, FileUploadLimit{
+		MaxSize:   1024 * 1024 * 5,
+		MaxCount:  1,
+		AllowType: []string{"jpg", "jpeg", "png", "svg"},
+	})
+	if err != nil {
+		m.Fail(ResponseJson{
+			Code:    http.StatusBadRequest,
+			Message: err.Error(),
+		})
+		return
+	}
+
+	tempLink, err := m.Service.UploadCommentPicture(iUploadCommentPicture.CommentID, file[0], &iUserAuth)
+	if err != nil {
+		m.Fail(ResponseJson{
+			Code:    http.StatusBadRequest,
+			Message: err.Error(),
+		})
+		return
+	}
+	m.OK(ResponseJson{
+		Code:    0,
+		Message: "success",
+		Data:    tempLink,
+	})
 }
 
 func (m *CommentApi) DeleteCommentPicture(c *gin.Context) {
+	var iDeleteCommentPictureDTO dto.DeleteCommentPictureDTO
+	if err := m.BuildRequest(BuildRequestOption{
+		Ctx:     c,
+		DTO:     &iDeleteCommentPictureDTO,
+		BindAll: true,
+	}).GetError(); err != nil {
+		return
+	}
 
+	var iUserAuthDTO dto.UserAuthDTO
+	iUserAuthDTO.PutAuth(c)
+
+	err := m.Service.DeleteCommentPicture(&iDeleteCommentPictureDTO, &iUserAuthDTO)
+
+	if err != nil {
+		m.SetError(err)
+		m.Fail(ResponseJson{
+			Code:    http.StatusBadRequest,
+			Message: err.Error(),
+		})
+		return
+	}
+
+	m.OK(ResponseJson{
+		Code:    0,
+		Message: "success",
+	})
 }

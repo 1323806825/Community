@@ -188,3 +188,11 @@ func (m *QuestionDao) GetMySubscribe(uid uint) (int64, error) {
 	}
 	return question.SubscribeCount, nil
 }
+
+func (m *QuestionDao) DeleteQuestionSubscribe(iDeleteQuestionSubscribe *dto.DeleteQuestionSubscribeDTO) error {
+	var Question model.Question
+	iDeleteQuestionSubscribe.ConveyToModel(&Question, &iDeleteQuestionSubscribe.QuestionID)
+
+	err := m.Orm.Model(&model.Question{}).Where("id = ?", iDeleteQuestionSubscribe.QuestionID).Update("subscribe_count", Question.SubscribeCount+1).Error
+	return err
+}

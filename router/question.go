@@ -26,7 +26,7 @@ func InitQuestionRouters() {
 			rgAuthQuestion.POST("/delete/picture", questionApi.DeleteQuestionPicture)
 			rgAuthQuestion.POST("/delete", questionApi.DeleteQuestion)
 			//rgAuthQuestion.POST("/add/subscribe", questionApi.AddQuestionSubscribe)
-			//rgAuthQuestion.POST("/delete/subscribe", questionApi.DeleteQuestionSubscribe)
+			rgAuthQuestion.POST("/delete/subscribe", questionApi.DeleteQuestionSubscribe)
 			rgAuthQuestion.GET("/subscribe/my", questionApi.GetMyQuestionSubscribe)
 		}
 	})

@@ -28,6 +28,7 @@ func InitDB() (*gorm.DB, error) {
 	_ = db.AutoMigrate(&Question{})
 	_ = db.AutoMigrate(&Subscribe{})
 	_ = db.AutoMigrate(&Comment{})
+	_ = db.AutoMigrate(&Like{})
 	if err != nil {
 		return nil, err
 	}
